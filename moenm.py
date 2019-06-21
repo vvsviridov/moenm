@@ -10,7 +10,7 @@ class MoENM(object):
     '''
     Use it to step-by-step commands execution i.e.
     when you need to lock object before change parameter
-    and unlock after
+    and unlock after her
     '''
 
 
