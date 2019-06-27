@@ -6,13 +6,13 @@ Created on 21 nov. 2018
 
 import enmscripting
 
+
 class MoENM(object):
     '''
     Use it to step-by-step commands execution i.e.
     when you need to lock object before change parameter
     and unlock after her
     '''
-
 
     def __init__(self, server=None, username=None, password=None):
         """ It requires the connection arguments.
@@ -35,14 +35,14 @@ class MoENM(object):
         cmd = "cmedit get %s -attr %s" % (fdn, param)
         out = self._run(cmd, *opts)
         return out
-    
+
     def delete(self, fdn, *opts):
         """ Uses the command "cmedit delete" to delete an object.
         """
         cmd = "cmedit delete %s" % fdn
         out = self._run(cmd, *opts)
         return out
-    
+
     def create(self, fdn, *opts, **kwargs):
         """ Uses the command "cmedit create" to create object with given values.
         """
@@ -50,7 +50,7 @@ class MoENM(object):
         cmd = "cmedit create %s %s" % (fdn, val)
         out = self._run(cmd, *opts)
         return out
-    
+
     def set(self, fdn, *opts, **kwargs):
         """ Uses the command "cmedit set" to set attribute and values of an MO
         given a FDN and its attributes.
@@ -64,9 +64,14 @@ class MoENM(object):
         """ Uses the command "cmedit action" to execute action of an MO
         given a FDN and its attributes.
         Ex.:
-        action("MeContext=ERBS001,ManagedElement=1", "manualrestart", restartrank="RESTART_WARM", restartreason="PLANNED_RECONFIGURATION", restartinfo="someInfo")
+        action("MeContext=ERBS001,ManagedElement=1", "manualrestart",
+        restartrank="RESTART_WARM", restartreason="PLANNED_RECONFIGURATION",
+        restartinfo="someInfo")
         """
-        val = ".(%s)" % (",".join("%s=%s" % (k, v) for k, v in kwargs.items())) if len(kwargs) > 0 else ""
+        val = ".(%s)" % (
+            ",".join(
+                "%s=%s" % (k, v) for k, v in kwargs.items())) if len(
+                    kwargs) > 0 else ""
         cmd = "cmedit action %s %s%s" % (fdn, act, val)
         out = self._run(cmd, *opts)
         return out
@@ -85,5 +90,4 @@ class MoENM(object):
         if exc_type:
             args = exc_val if isinstance(exc_val, tuple) else \
                  ((exc_val,) if isinstance(exc_val, str) else exc_val.args)
-            raise exc_type(*args), None, exc_tb
-        
+            raise(exc_type(*args), None, exc_tb)
