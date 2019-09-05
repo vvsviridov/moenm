@@ -7,6 +7,7 @@ command's job's takes "COMPLETED" status
 """
 import enmscripting
 import time
+import re
 
 
 def read_file(fname):
@@ -45,23 +46,30 @@ def print_red(str_to_print):
     print "%s%s%s%s%s" % ("\x1B[", "31;40m", str_to_print, "\x1B[", "0m")
 
 
-def main():
+def exec_batch(filename):
     try:
         session = enmscripting.open()
         terminal = session.terminal()
-        for full_cmd in read_file("cfgs.txt"):
+        for full_cmd in read_file(filename):
             cmd_prefix = " ".join(full_cmd.split()[0:2])
             output = get_output(terminal, full_cmd)
             if "Error" not in " ".join(output).split():
-                jobid = output[-1].split()[-1]
-                wait_for_completed_status(terminal, jobid, cmd_prefix)
+                if re.match(r"[\w\s]+job\s+ID[\w\s]+", output[-1]) is not None:
+                    jobid = output[-1].split()[-1]
+                    wait_for_completed_status(terminal, jobid, cmd_prefix)
                 cfg_str = "Command <%s> has been executed!" % full_cmd
                 print_red(cfg_str)
     except Exception as e:
         print e
     finally:
-        if session is not None:
+        try:
             enmscripting.close(session)
+        except Exception:
+            print "Can't close session"
+
+
+def main():
+    exec_batch("cfg.txt")
 
 
 if __name__ == "__main__":
